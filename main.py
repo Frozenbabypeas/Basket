@@ -64,7 +64,7 @@ Summary_detail = st.container()
 with Summary_content:
         st.header('Store Details')
         st.write("Pick the below drill down items to isolate the data")
-        sum_col, sum_year = st.columns(2) # creating three columns within the container
+        sum_col, sum_year = st.columns(2) # creating two columns within the container
 
         countries = sum_col.selectbox('Select Country', options = df['Country'].drop_duplicates().sort_values())
         years = sum_year.selectbox('Select Year', options = df['Order year'].drop_duplicates().sort_values())
@@ -82,16 +82,11 @@ with Summary_content:
         st.write(figure1)
         #figure 1
         
-        st.write(f"In {countries} the most items bought is in the category of {freq_items.values}, with {freq_items[0]} sold in the year of {years}")
-
-
-        # sunburst = px.sunburst(data_frame = input_country_selection, path = ['Sub-Category', 'Product Name'], width = 700, height = 800)
-        # st.write(sunburst)
-
+        st.write(f"In {countries} the most items bought is in the category of {freq_items.index[0]}, with {freq_items[0]} sold in the year of {years}")
 
 st.header('Consumer Behaviour')
 st.subheader('Product Association Rule')
-st.write('Using an association algorithm, we can combine the different sets of item purchases and thier frequency in a basket.  Association Rules are widely used to analyse transaction based data to identify sets and associations.  We can drill into the data based on country and period.  Select the Category to see the associated purchses: ')
+st.write('Using an association algorithm, we can combine the different sets of item purchases and thier frequency in a basket.  Association Rules are widely used to analyse transaction based data to identify sets and associations.  We can drill into the data based on country and period.  Select the Category to see the associated categories bought.')
 
 cat_select = st.selectbox('Select Category', options = input_country_selection['Sub-Category'].drop_duplicates().sort_values())
 
@@ -106,7 +101,7 @@ item_transformed = TE.transform(items)
 item_matrix = pd.DataFrame(item_transformed, columns = TE.columns_)
 
 #--------------------get the support value by Apriori algorithm------------------------
-freq_items = apriori(item_matrix, min_support=0.01, use_colnames=True, max_len=5) # we can increase the basket size by changing the max_len
+freq_items = apriori(item_matrix, min_support=0.01, use_colnames=True, max_len=2) # we can increase the basket size by changing the max_len
 
 #--------------------create a dataframe with product support, confidence , and lift values------------------------
 rules = association_rules(freq_items, metric = "confidence", min_threshold = 0)
@@ -157,10 +152,6 @@ fig = ff.create_annotated_heatmap(pivot_confidence.to_numpy().round(2),
                                 y=list(pivot_confidence.index))
 fig.update_layout(
     template='simple_white',
-    autosize=False,
-    width=800,
-    height=800,
-    title="Lift Matrix",
     xaxis_title='Consequents',
     yaxis_title='Antecedents',
     legend_title="Legend Title"
@@ -170,7 +161,7 @@ fig.update_traces(showscale=True)
 figure4 = fig.update_layout(title_x=0.22, title_y=0.98).update_traces(showscale=True)
 #figure 4
 
-#-------------------- plot the network to see the connections between the top 10 percentile items------------------------
+#-------------------- plot the network to see the connections between the top percentile items------------------------
 network_A = list(rules_best_eda["antecedents"].unique())
 network_B = list(rules_best_eda["consequents"].unique())
 node_list = list(set(network_A+network_B))
@@ -263,6 +254,8 @@ if selected == 'Raw Data':
     raw_data = st.container()
 
     with raw_data:
-        st.subheader('Aproroi Assocation Data')
-        st.write(figure2)
-        st.write(figure4)
+        st.subheader('Apriori Assocation Data')
+        st.write('Raw Data on selected category')
+        st.write(df)
+        st.write('Top 10 percentile of categories purchased')
+        st.write(rules_best_eda)
