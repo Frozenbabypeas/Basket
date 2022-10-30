@@ -1,11 +1,18 @@
+# set up streamlit
+import streamlit as st
+from streamlit_option_menu import option_menu
+
+#set up layout
+page_title = 'Basket Analysis'
+page_icon = ':honey_pot:'
+layout = 'centered'
+
+st.set_page_config(page_title = page_title, page_icon = page_icon, layout = layout)
+
 # get data from data.py
 from sre_parse import CATEGORIES
 from urllib import request
 from data import df
-
-# set up streamlit
-import streamlit as st
-from streamlit_option_menu import option_menu
 
 # set up environment
 import numpy as np
@@ -32,29 +39,6 @@ warnings.filterwarnings('ignore')
 
 # network graph
 import networkx as nx
-
-# set up graphics
-import json # for lottie files
-from streamlit_lottie import st_lottie
-from streamlit_lottie import st_lottie_spinner
-
-#set up layout
-page_title = 'Basket Analysis'
-page_icon = ':honey_pot:'
-layout = 'centered'
-
-# def load_lottieurl(url: str):
-#     r = request.get(url)
-#     if r.status_code != 200:
-#         return None
-#     return r.json()
-
-# lottie_url = load_lottieurl("https://assets4.lottiefiles.com/packages/lf20_ttwumewy.json")
-
-# lottie = st_lottie(lottie_url, width = 100, height = 100)
-# st.write(lottie)
-
-st.set_page_config(page_title = page_title, page_icon = page_icon, layout = layout)
 
 st.title(page_title)
 
@@ -241,12 +225,12 @@ if selected == 'Visual':
     network_lift = st.container()
     with purchase_lift:
         st.subheader('Lift Matrix')
-        st.write('The lift Matrix will can show us')
+        st.write('The lift matrix will can show us the antecednet (the category first purchased) against the consequent (the category purchases after the first purchase) with its lift, which is the ratio of consequent sale after the antecedent sale.  The higher our lift value will mean the higher the chance that the antecedent purchase will result with the consequent purchase.')
         st.write(figure4)
 
     with network_lift:
         st.subheader('Associated purchases')
-        st.write(f'This network graph will show us the proxmity of purchases from the {cat_select} category')
+        st.write(f'This network graph will show us the other category purchases from the {cat_select} category')
         st.write(figure5)
 
 # Raw data menu
